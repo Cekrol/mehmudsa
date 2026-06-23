@@ -13,9 +13,9 @@
         body { background-color: var(--bg-color); margin: 0; padding: 0; overflow: hidden; height: 100vh; font-family: 'Press Start 2P', monospace; transition: background-color 0.5s ease; }
         body.white-theme { --bg-color: #ffffff; --text-color: #000000; --star-color: #000000; }
 
-        /* --- ÜSTTEKİ YENİ TEMA DEĞİŞTİRME BUTONU (TOGGLE SWITCH) --- */
+        /* --- TEMA DEĞİŞTİRME BUTONU (TOGGLE SWITCH) --- */
         .theme-switch {
-            display: none; /* Kilit açılmadan görünmez */
+            display: none;
             position: fixed;
             top: 20px;
             right: 20px;
@@ -24,47 +24,16 @@
             z-index: 999999;
         }
 
-        .theme-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #3b82f6; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333; /* Siyah temada kapalı durumu */
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        /* Beyaz temaya (Açık duruma) geçildiğinde gönderdiğin fotoğraftaki mavi renk */
-        input:checked + .slider {
-            background-color: #3b82f6; 
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        /* --- 1. ADIM: PARMAK İZİ KİLİT EKRANI --- */
+        /* --- PARMAK İZİ KİLİT EKRANI --- */
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.2s; }
         .lock-title { font-family: 'Dancing Script', cursive; color: #ffffff; font-size: 32pt; margin-bottom: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); user-select: none; }
         
-        /* Mobilde basılı tutarken sorun çıkmaması için touch-action eklendi */
         .scanner-container { width: 220px; height: 220px; border-radius: 50%; border: 3px solid rgba(255, 45, 85, 0.2); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 25px rgba(255, 45, 85, 0.1); cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
         
         .scanner-container.scanning { animation: spinRing 4s linear infinite; border-top: 3px solid #ff2d55; border-bottom: 3px solid #ff2d55; box-shadow: 0 0 25px rgba(255, 45, 85, 0.4); }
@@ -88,6 +57,7 @@
         .star { position: absolute; background-color: var(--star-color); clip-path: polygon(50% 0%, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0% 50%, 37% 37%); opacity: 0; animation: twinkle linear infinite; }
         @keyframes twinkle { 0% { opacity: 0; transform: scale(0.3); } 50% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(0.3); } }
 
+        /* --- ARAYÜZ --- */
         .wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
         .pixel-window { background-color: var(--bg-color); border: 6px double var(--text-color); width: 440px; max-width: 90%; box-shadow: 0 0 25px rgba(255,255,255,0.05); z-index: 2; transition: all 0.5s ease; }
         .window-bar { border-bottom: 4px solid var(--text-color); padding: 10px; display: flex; gap: 6px; }
@@ -101,13 +71,33 @@
         .pixel-btn:hover { background: var(--text-color); color: var(--bg-color); border: 4px inset var(--text-color); }
         #noBtn { position: relative; z-index: 9999; }
 
+        /* --- KALP VE YAZILAR EKRANI --- */
         .special-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; opacity: 0; transition: opacity 0.8s ease; }
         #heartCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 21; }
         
         .center-letters { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 25; font-size: 45pt; font-family: 'Press Start 2P', monospace; display: flex; gap: 25px; pointer-events: none; opacity: 0; transition: opacity 2.5s ease-in-out; }
-        .char-d, .char-m { transition: opacity 0.4s ease, color 0.4s ease; }
+        
+        /* GÜNCELLEME 1: HARFLERİN PARLAMASI */
+        .char-d, .char-m { 
+            transition: opacity 0.4s ease, color 0.4s ease;
+            animation: letterGlow 1.5s ease-in-out infinite alternate;
+        }
 
-        .love-quote { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); z-index: 26; font-family: 'Great Vibes', cursive; color: #8a0303; font-size: 48pt; text-align: center; width: 100%; opacity: 0; transition: opacity 3s ease-in-out; text-shadow: 0 0 15px rgba(138, 3, 3, 0.4); pointer-events: none; }
+        /* currentColor sayesinde rengi neyse o renkte parlama yayar */
+        @keyframes letterGlow {
+            0% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+            100% { text-shadow: 0 0 20px currentColor, 0 0 35px currentColor, 0 0 50px currentColor; }
+        }
+
+        /* GÜNCELLEME 2: YAZININ KALINLAŞMASI */
+        .love-quote { 
+            position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); z-index: 26; 
+            font-family: 'Great Vibes', cursive; color: #8a0303; font-size: 48pt; 
+            font-weight: bold; /* Kalınlık eklendi */
+            -webkit-text-stroke: 1.5px #8a0303; /* Ekstra dolgunluk/kalınlık eklendi */
+            text-align: center; width: 100%; opacity: 0; transition: opacity 3s ease-in-out; 
+            text-shadow: 0 0 15px rgba(138, 3, 3, 0.6); pointer-events: none; 
+        }
     </style>
 </head>
 <body>
@@ -175,22 +165,17 @@
         <div class="love-quote" id="loveQuote">Sana aşığım lan</div>
     </div>
         <script>
-        // --- PARMAK İZİ "BASILI TUTMA" MANTIĞI ---
+        // --- PARMAK İZİ MANTIĞI ---
         let scanTimer = null;
         let isScanning = false;
 
         function startScan(e) {
-            // Mobilde kaydırmayı engellemek için dokunma fonksiyonlarını durdur
             if (e && e.cancelable && e.type !== 'mousedown') e.preventDefault();
-            
-            // Eğer zaten tarama başladıysa tekrar tetikleme
             if (isScanning) return; 
             isScanning = true;
 
-            // Efekti başlat (Lazer döner)
             document.getElementById('scannerZone').classList.add('scanning');
             
-            // 1.5 Saniye aralıksız basılırsa kilidi aç
             scanTimer = setTimeout(() => {
                 const lock = document.getElementById('lockScreen');
                 lock.style.opacity = '0';
@@ -201,7 +186,6 @@
         }
 
         function cancelScan(e) {
-            // El çekilirse süreyi iptal et ve efektleri durdur
             if (scanTimer) {
                 clearTimeout(scanTimer);
                 scanTimer = null;
@@ -210,7 +194,7 @@
             document.getElementById('scannerZone').classList.remove('scanning');
         }
 
-        // --- SİYAH / BEYAZ TEMA DEĞİŞTİRME MANTIĞI ---
+        // --- TEMA VE HARF GÖRÜNÜRLÜĞÜ ---
         function toggleTheme() {
             document.body.classList.toggle('white-theme');
             applyLetterVisibility();
@@ -221,7 +205,6 @@
             const mLetter = document.getElementById('letterM');
             const dLetter = document.getElementById('letterD');
             
-            // Beyaz temada D harfi görünür (Siyah renkli olur ki okunsun)
             if (isWhiteTheme) {
                 if(dLetter) {
                     dLetter.style.opacity = '1';
@@ -229,7 +212,6 @@
                 }
                 if(mLetter) mLetter.style.opacity = '0';
             } else {
-            // Siyah temada M harfi görünür (Beyaz renkli olur ki okunsun)
                 if(mLetter) {
                     mLetter.style.opacity = '1';
                     mLetter.style.color = '#ffffff';
@@ -440,4 +422,3 @@
     </script>
 </body>
 </html>
-
