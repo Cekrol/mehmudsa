@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #000000; /* Kesin siyah arka plan */
+            background-color: #000000;
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -40,12 +40,11 @@
             border-radius: 50%;
             opacity: 0;
             animation: twinkle linear infinite;
-            filter: drop-shadow(0 0 4px #ffffff);
         }
 
         @keyframes twinkle {
             0% { opacity: 0; transform: scale(0.3); }
-            50% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.3); }
         }
 
@@ -64,11 +63,11 @@
 
         /* Klasik Pixel Pencere Tasarımı */
         .pixel-window {
-            background-color: rgba(10, 10, 10, 0.85);
+            background-color: rgba(5, 5, 5, 0.9);
             border: 6px double #ffffff;
             width: 440px;
             max-width: 90%;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            box-shadow: 0 0 25px rgba(255,255,255,0.1);
             z-index: 2;
         }
 
@@ -119,7 +118,6 @@
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
             outline: none;
-            transition: background 0.1s ease, color 0.1s ease;
         }
 
         .pixel-btn:hover {
@@ -133,7 +131,7 @@
             z-index: 9999;
         }
 
-        /* --- EVET EKRANI VE MATEMATİKSEL KALP ALANI --- */
+        /* --- EVET EKRANI VE GEOMETRİK KALP ALANI --- */
         .special-screen {
             display: none;
             position: absolute;
@@ -155,7 +153,7 @@
             z-index: 21;
         }
 
-        /* Kalbin Ortasında Yavaşça Beliren Pembe Parlayan D Yazısı */
+        /* Kalbin Ortasında Parlayan Pembe D Yazısı */
         .center-d {
             position: absolute;
             top: 50%;
@@ -163,19 +161,21 @@
             transform: translate(-50%, -50%);
             z-index: 25;
             color: #ff66cc;
-            font-size: 45pt;
+            font-size: 50pt;
             font-family: 'Press Start 2P', monospace;
             opacity: 0;
-            transition: opacity 2.5s ease-in-out; /* Yavaşça belirmesi için */
-            text-shadow: 0 0 10px #ff66cc, 0 0 25px #ff007f, 0 0 45px #ff0055;
+            transition: opacity 3s ease-in-out;
+            text-shadow: 0 0 15px #ff66cc, 0 0 30px #ff007f, 0 0 50px #ff0055;
             pointer-events: none;
         }
     </style>
 </head>
 <body>
 
+    <!-- Arka Plan Yıldızları -->
     <div id="starContainer"></div>
 
+    <!-- Soru Arayüzü -->
     <div class="wrapper" id="viewInterface">
         <div class="pixel-window">
             <div class="window-bar">
@@ -197,40 +197,37 @@
         </div>
     </div>
 
+    <!-- Videodaki Takımyıldızı Kalp Ekranı -->
     <div class="special-screen" id="specialScreen">
         <canvas id="heartCanvas"></canvas>
         <div class="center-d" id="letterD">D</div>
     </div>
 
     <script>
-        // Küçük ve narin gökyüzü yıldızları oluşturma
+        // Arka plandaki küçük zarif yıldızlar
         function createSmallStars() {
             const container = document.getElementById('starContainer');
-            const starCount = 45; // Hafif ve göz yormayan miktar
+            const starCount = 40; 
 
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-                
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
                 
-                // Yıldızları küçük boyutlara sabitledik
-                const size = Math.random() * 3 + 2; 
+                const size = Math.random() * 2 + 1.5; 
                 star.style.width = size + 'px';
                 star.style.height = size + 'px';
                 
-                const duration = Math.random() * 2 + 1.5; 
-                const delay = Math.random() * 3;
-                star.style.animationDuration = duration + 's';
-                star.style.animationDelay = delay + 's';
+                star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                star.style.animationDelay = (Math.random() * 3) + 's';
                 
                 container.appendChild(star);
             }
         }
         createSmallStars();
 
-        // Kaçan No Butonu Mantığı
+        // Akıllı Kaçan No Butonu
         function fleeNo(e) {
             if (e && e.type === 'touchstart') e.preventDefault();
             
@@ -244,18 +241,18 @@
             }
 
             setTimeout(() => {
-                const maxX = window.innerWidth - btn.offsetWidth - 25;
-                const maxY = window.innerHeight - btn.offsetHeight - 25;
+                const maxX = window.innerWidth - btn.offsetWidth - 30;
+                const maxY = window.innerHeight - btn.offsetHeight - 30;
                 
-                const randomX = Math.max(25, Math.floor(Math.random() * maxX));
-                const randomY = Math.max(25, Math.floor(Math.random() * maxY));
+                const randomX = Math.max(30, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(30, Math.floor(Math.random() * maxY));
                 
                 btn.style.left = randomX + 'px';
                 btn.style.top = randomY + 'px';
             }, 10);
         }
 
-        // Evet'e basınca tetiklenecek fonksiyon
+        // Evet'e basınca geçiş mekanizması
         function triggerYes() {
             const ui = document.getElementById('viewInterface');
             const special = document.getElementById('specialScreen');
@@ -268,19 +265,19 @@
                 special.style.display = 'block';
                 setTimeout(() => {
                     special.style.opacity = '1';
-                    // Videodaki matematiksel kalbi başlat
-                    startHeartAnimation();
+                    // Videodaki gerçek örümcek ağı kalbi başlatır
+                    startComplexPlexusHeart();
                     
-                    // Kalp çizilmeye başladıktan 1 saniye sonra D harfi yavaşça belirsin
+                    // Kalp belirdikten sonra D harfi arkadan süzülerek gelir
                     setTimeout(() => {
                         letterD.style.opacity = '1';
-                    }, 1000);
+                    }, 1200);
                 }, 50);
             }, 500);
         }
 
-        // --- VİDEODAKİ MATEMATİKSEL KALP CANLANDIRMASI (CANVAS PARTICLES) ---
-        function startHeartAnimation() {
+        // --- VİDEODAKİ GEOMETRİK BAĞLANTILI KALP ALGORİTMASI (PLEXUS MESH) ---
+        function startComplexPlexusHeart() {
             const canvas = document.getElementById('heartCanvas');
             const ctx = canvas.getContext('2d');
             
@@ -292,90 +289,106 @@
             resize();
 
             const particles = [];
-            const particleCount = 450; // Kalbi oluşturan yoğun parıltı adedi
+            // Net geometrik hatlar ve çizgiler için ideal nokta sayısı
+            const particleCount = 180; 
 
-            // Videoda kullanılan formül tabanlı koordinat fonksiyonu
+            // Videodaki matematiksel kalp eğrisi formülü
             function getHeartPoint(t) {
-                // n koordinat ölçeği
-                const scale = Math.min(canvas.width, canvas.height) / 32; 
+                const scale = Math.min(canvas.width, canvas.height) / 30; 
                 return {
                     x: scale * 16 * Math.pow(Math.sin(t), 3),
                     y: -scale * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
                 };
             }
 
-            // Parçacık Sınıfı
-            class Particle {
+            class HeartParticle {
                 constructor(targetT) {
                     this.targetT = targetT;
-                    this.reset();
-                    // İlk açılışta rastgele dağılsınlar, merkeze toplansınlar diye
-                    this.x = canvas.width / 2 + (Math.random() - 0.5) * 200;
-                    this.y = canvas.height / 2 + (Math.random() - 0.5) * 200;
-                }
-
-                reset() {
                     this.basePoint = getHeartPoint(this.targetT);
-                    this.size = Math.random() * 2 + 1.5;
-                    this.speed = Math.random() * 0.04 + 0.02;
-                    this.alpha = Math.random() * 0.5 + 0.5;
-                    this.wanderAngle = Math.random() * Math.PI * 2;
+                    
+                    // Kalbin etrafında mikro titreşimler yapması için rastgelelik
+                    this.x = canvas.width / 2 + this.basePoint.x + (Math.random() - 0.5) * 30;
+                    this.y = canvas.height / 2 + this.basePoint.y + (Math.random() - 0.5) * 30;
+                    
+                    this.speed = Math.random() * 0.03 + 0.02;
+                    this.radius = Math.random() * 1.5 + 1;
+                    this.vibrationSeed = Math.random() * 100;
                 }
 
                 update(pulseFactor) {
-                    // Kalp atış (pulse) ritmini formüle dahil etme
+                    // Kalp ritmine göre hedef noktayı sürekli güncelle
                     const targetX = canvas.width / 2 + this.basePoint.x * pulseFactor;
                     const targetY = canvas.height / 2 + this.basePoint.y * pulseFactor;
 
-                    // Noktaya doğru akma hareketi
-                    this.x += (targetX - this.x) * this.speed;
-                    this.y += (targetY - this.y) * this.speed;
+                    this.vibrationSeed += 0.05;
+                    // Videodaki gibi noktaların canlı gibi titremesi sağlanır
+                    const jitterX = Math.sin(this.vibrationSeed) * 4;
+                    const jitterY = Math.cos(this.vibrationSeed) * 4;
 
-                    // Mikro parıltı ve dalgalanma efekti
-                    this.wanderAngle += 0.1;
-                    this.x += Math.sin(this.wanderAngle) * 0.3;
-                    this.y += Math.cos(this.wanderAngle) * 0.3;
+                    // Yumuşak takip mekanizması
+                    this.x += (targetX + jitterX - this.x) * this.speed;
+                    this.y += (targetY + jitterY - this.y) * this.speed;
                 }
 
                 draw() {
-                    ctx.save();
-                    ctx.globalAlpha = this.alpha;
-                    ctx.fillStyle = '#ffffff'; // Kalp rengi beyaz
-                    // Güçlü beyaz parlama etkisi (glow)
-                    ctx.shadowBlur = 12;
-                    ctx.shadowColor = '#ffffff';
-                    
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = '#ffffff';
                     ctx.fill();
-                    ctx.restore();
                 }
             }
 
-            // Kalp çevresi boyunca parçacıkları oluştur
+            // Kalp formunun üzerine noktaları diz
             for (let i = 0; i < particleCount; i++) {
                 const t = (i / particleCount) * Math.PI * 2;
-                particles.push(new Particle(t));
+                particles.push(new HeartParticle(t));
             }
 
-            let loopTime = 0;
+            let timeCounter = 0;
 
-            function animate() {
+            function renderLoop() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                loopTime += 0.05;
+                timeCounter += 0.04;
 
-                // Kalbin ritmik olarak atmasını sağlayan çarpan (Pulse)
-                const pulseFactor = 1 + 0.07 * Math.sin(loopTime * 1.5);
+                // Kalbin kasılıp gevşeme (Atış) katsayısı
+                const pulseFactor = 1 + 0.08 * Math.sin(timeCounter * 1.5);
 
+                // 1. Adım: Tüm noktaların yerini güncelle ve çiz
                 particles.forEach(p => {
                     p.update(pulseFactor);
                     p.draw();
                 });
 
-                requestAnimationFrame(animate);
+                // 2. Adım: VİDEODAKİ ANA EFEKT - Noktaları birbirine örümcek ağı gibi bağla
+                ctx.shadowBlur = 0; // Çizgilerde kasma yapmaması için gölge sıfırlanır
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        // Eğer iki nokta birbirine yeterince yakınsa aralarında çizgi ör
+                        // Mesafe sınırını videodaki sıklığa göre ayarladım (65px)
+                        if (distance < 65) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            
+                            // Yakınlığa göre çizginin opaklığı değişir (Birebir video estetiği)
+                            const opacity = (1 - distance / 65) * 0.4;
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(renderLoop);
             }
 
-            animate();
+            renderLoop();
         }
     </script>
 </body>
