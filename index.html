@@ -58,7 +58,7 @@
             transition: opacity 0.5s ease;
         }
 
-        /* --- DAHA GÜÇLÜ PARLAYAN AZ SAYIDA YILDIZLAR --- */
+        /* --- DAHA GÜÇLÜ PARLAYAN YILDIZLAR --- */
         #starContainer {
             position: absolute;
             top: 0;
@@ -73,7 +73,6 @@
             position: absolute;
             opacity: 0;
             animation: twinkle linear infinite;
-            /* Ultra parlama efekti */
             filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 18px rgba(255, 255, 255, 0.9));
         }
 
@@ -83,7 +82,7 @@
             100% { opacity: 0; transform: scale(0.2) rotate(0deg); }
         }
 
-        /* Buzlu Cam Efektli Premium Pixel Pencere */
+        /* Pencere Tasarımı */
         .pixel-window {
             background-color: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(12px);
@@ -125,7 +124,14 @@
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
+        }
+
+        /* Butonların yerini koruması için taşıyıcılar eklendi */
+        .btn-wrapper {
+            width: 100px; 
+            display: flex;
+            justify-content: center;
         }
 
         .pixel-btn {
@@ -137,7 +143,8 @@
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
             outline: none;
-            transition: all 0.1s ease;
+            transition: background 0.1s ease, color 0.1s ease;
+            white-space: nowrap;
         }
 
         .pixel-btn:hover {
@@ -148,8 +155,7 @@
 
         #noBtn {
             position: relative;
-            transition: all 0.2s ease;
-            z-index: 50;
+            z-index: 9999; /* Her şeyin üstünde olmasını garantiler */
         }
 
         /* --- EVET'E BASINCA AÇILACAK ÖZEL EKRAN --- */
@@ -170,7 +176,6 @@
             padding: 20px;
         }
 
-        /* Parlayan Romantik Ay Figürü */
         .glowing-moon {
             width: 130px;
             height: 130px;
@@ -205,7 +210,6 @@
 <body>
 
     <div class="nebula-bg"></div>
-
     <div id="starContainer"></div>
 
     <div class="wrapper" id="viewInterface">
@@ -216,10 +220,14 @@
                 <span class="window-dot"></span>
             </div>
             <div class="window-body">
-                <h1 class="title-text">Sana bir soru sormak istiyorum...</h1>
+                <h1 class="title-text">Ne kadar tartışsakda seni seviyorum peki sen?</h1>
                 <div class="btn-container">
-                    <button class="pixel-btn" onclick="triggerYes()">Yes</button>
-                    <button class="pixel-btn" id="noBtn" onmouseover="fleeNo()" onclick="fleeNo()" ontouchstart="fleeNo()">No</button>
+                    <div class="btn-wrapper">
+                        <button class="pixel-btn" onclick="triggerYes()">Yes</button>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button class="pixel-btn" id="noBtn" onmouseover="fleeNo(event)" ontouchstart="fleeNo(event)">No</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -234,10 +242,9 @@
     </div>
 
     <script>
-        // Sayısı azaltılmış ama çok daha güçlü parlayan yıldızlar
         function createStars() {
             const container = document.getElementById('starContainer');
-            const starCount = 20; // 80'den 20'ye düşürerek sadeleştirdik
+            const starCount = 20;
 
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
@@ -252,7 +259,6 @@
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
                 
-                // Yıldızların boyutu (Daha belirgin parlamaları için hafif büyütüldü)
                 const size = Math.random() * 14 + 14; 
                 star.style.width = size + 'px';
                 star.style.height = size + 'px';
@@ -268,7 +274,6 @@
 
         createStars();
 
-        // Yes butonuna basınca olacak sihirli an
         function triggerYes() {
             const ui = document.getElementById('viewInterface');
             const special = document.getElementById('specialScreen');
@@ -284,19 +289,37 @@
             }, 500);
         }
 
-        // Kaçan No Butonu
-        function fleeNo() {
-            const noBtn = document.getElementById('noBtn');
+        // Geliştirilmiş, kaybolmayan ve yumuşak kaçan "No" butonu
+        function fleeNo(e) {
+            // Eğer mobilden dokunuluyorsa tuşa basılmasını iptal et, sadece kaçsın
+            if (e && e.type === 'touchstart') {
+                e.preventDefault();
+            }
             
-            const maxX = window.innerWidth - noBtn.offsetWidth - 40;
-            const maxY = window.innerHeight - noBtn.offsetHeight - 40;
+            const btn = document.getElementById('noBtn');
             
-            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
-            const randomY = Math.max(20, Math.floor(Math.random() * maxY));
-            
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
+            // Eğer buton henüz serbest bırakılmadıysa (ilk kaçış)
+            if (btn.style.position !== 'fixed') {
+                const rect = btn.getBoundingClientRect();
+                btn.style.position = 'fixed';
+                // Eski yerinden tam olarak çıkması için koordinatlarını eşitle
+                btn.style.left = rect.left + 'px';
+                btn.style.top = rect.top + 'px';
+                btn.style.transition = 'all 0.3s ease'; // Yumuşak kayma animasyonu
+            }
+
+            setTimeout(() => {
+                // Butonun ekranın dışına taşmasını engelleyen güvenlik sınırları
+                const maxX = window.innerWidth - btn.offsetWidth - 20;
+                const maxY = window.innerHeight - btn.offsetHeight - 20;
+                
+                // En az 20px içeride kalacak şekilde rastgele koordinat
+                const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+                
+                btn.style.left = randomX + 'px';
+                btn.style.top = randomY + 'px';
+            }, 10);
         }
     </script>
 </body>
