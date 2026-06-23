@@ -6,7 +6,7 @@
     <title>Sana Aşığım</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Great+Vibes&family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -250,14 +250,16 @@
             font-weight: normal;
         }
 
+        /* --- YENİDEN DÜZENLENMİŞ BUTON ARALIĞI --- */
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 50px; /* Butonlar arası boşluk arttırıldı */
+            margin-top: 25px;
         }
 
         .btn-wrapper {
-            width: 100px; 
+            min-width: 120px; /* İç içe girmelerini engellemek için */
             display: flex;
             justify-content: center;
         }
@@ -306,7 +308,7 @@
             z-index: 21;
         }
 
-        /* Ortadaki Harfler Alanı (D ve M Yan Yana) */
+        /* Ortadaki Harfler Alanı (D ve M) */
         .center-letters {
             position: absolute;
             top: 50%;
@@ -322,33 +324,25 @@
             transition: opacity 2.5s ease-in-out;
         }
 
-        .char-d {
-            color: #ffffff; 
-            text-shadow: 0 0 15px rgba(255,255,255,0.6);
-            transition: opacity 0.4s ease;
+        .char-d, .char-m {
+            transition: opacity 0.4s ease, color 0.4s ease;
         }
 
-        .char-m {
-            color: #000000; 
-            text-shadow: 0 0 15px rgba(255,255,255,0.8);
-            transition: opacity 0.4s ease;
-        }
-
-        /* Kalbin Altındaki Aşk Sözü */
+        /* YENİ STİLDE KAN KIRMIZISI AŞK SÖZÜ */
         .love-quote {
             position: absolute;
             bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 26;
-            font-family: 'Dancing Script', cursive;
-            color: #ff2d55;
-            font-size: 35pt;
+            font-family: 'Great Vibes', cursive; /* Yeni Zarif Yazı Tipi */
+            color: #8a0303; /* Kan Kırmızısı */
+            font-size: 48pt; /* Biraz daha belirgin font */
             text-align: center;
             width: 100%;
             opacity: 0;
             transition: opacity 3s ease-in-out;
-            text-shadow: 0 0 15px rgba(255, 45, 85, 0.3);
+            text-shadow: 0 0 15px rgba(138, 3, 3, 0.4);
             pointer-events: none;
         }
     </style>
@@ -408,17 +402,14 @@
         <div class="love-quote" id="loveQuote">Sana aşığım lan</div>
     </div>
         <script>
-        // --- PARMAK İZİ BİR KERE DOKUNUNCA OTOMATİK TARAMA SİSTEMİ ---
         let isScanning = false;
 
         function startScan() {
-            if (isScanning) return; // Zaten tarıyorsa tekrar basmayı engeller
+            if (isScanning) return; 
             isScanning = true;
 
-            // Dokunulduğunda tarama efektini aktif et
             document.getElementById('scannerZone').classList.add('scanning');
             
-            // 1.5 saniye animasyon oynar, sonra kilit açılır
             setTimeout(() => {
                 const lock = document.getElementById('lockScreen');
                 lock.style.opacity = '0';
@@ -428,7 +419,6 @@
             }, 1500);
         }
 
-        // --- SİYAH / BEYAZ TEMA DEĞİŞTİRME MANTIĞI ---
         function toggleTheme() {
             document.body.classList.toggle('white-theme');
             applyLetterVisibility();
@@ -439,16 +429,24 @@
             const mLetter = document.getElementById('letterM');
             const dLetter = document.getElementById('letterD');
             
+            // GÜNCELLENEN MANTIK: 
+            // Beyaz temada D harfi görünür (Siyah renkli olur ki okunsun)
             if (isWhiteTheme) {
-                if(dLetter) dLetter.style.opacity = '1';
+                if(dLetter) {
+                    dLetter.style.opacity = '1';
+                    dLetter.style.color = '#000000'; 
+                }
                 if(mLetter) mLetter.style.opacity = '0';
             } else {
-                if(mLetter) mLetter.style.opacity = '1';
+            // Siyah temada M harfi görünür (Beyaz renkli olur ki okunsun)
+                if(mLetter) {
+                    mLetter.style.opacity = '1';
+                    mLetter.style.color = '#ffffff';
+                }
                 if(dLetter) dLetter.style.opacity = '0';
             }
         }
 
-        // 4 Köşeli Oval Yıldızları Oluşturma
         function createSmallStars() {
             const container = document.getElementById('starContainer');
             const starCount = 45; 
@@ -471,7 +469,6 @@
         }
         createSmallStars();
 
-        // Kusursuz Kaçan Hayır Butonu
         function fleeNo(e) {
             if (e && e.type === 'touchstart') e.preventDefault();
             
@@ -496,7 +493,6 @@
             }, 10);
         }
 
-        // Evet Butonuna Tıklanınca Sahnelerin Geçişi
         function triggerYes() {
             const ui = document.getElementById('viewInterface');
             const special = document.getElementById('specialScreen');
@@ -520,7 +516,6 @@
             }, 500);
         }
 
-        // --- İNTERAKTİF FİZİK MOTORLU VE KALIN ÇİZGİLİ KALP ALGORİTMASI ---
         const mouse = { x: null, y: null, radius: 100 };
 
         window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
