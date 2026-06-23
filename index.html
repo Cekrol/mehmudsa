@@ -96,7 +96,7 @@
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: none;
+            touch-action: manipulation;
         }
 
         .scanner-container.scanning {
@@ -360,11 +360,7 @@
     <div id="lockScreen">
         <div class="lock-title">Para ti, mi amor</div>
         
-        <div class="scanner-container" id="scannerZone" 
-             onpointerdown="startScan()" 
-             onpointerup="cancelScan()" 
-             onpointerleave="cancelScan()" 
-             onpointercancel="cancelScan()">
+        <div class="scanner-container" id="scannerZone" onclick="startScan()">
             <div class="scanner-inner">
                 <div class="laser-line"></div>
                 <svg class="fingerprint-svg" viewBox="0 0 512 512">
@@ -412,32 +408,24 @@
         <div class="love-quote" id="loveQuote">Sana aşığım lan</div>
     </div>
         <script>
-        // --- PARMAK İZİ GERÇEKÇİ TARAMA SİSTEMİ ---
-        let scanTimer = null;
+        // --- PARMAK İZİ BİR KERE DOKUNUNCA OTOMATİK TARAMA SİSTEMİ ---
+        let isScanning = false;
 
         function startScan() {
-            if (scanTimer) return;
+            if (isScanning) return; // Zaten tarıyorsa tekrar basmayı engeller
+            isScanning = true;
 
-            // Basıldığında tarama efektini aktif et
+            // Dokunulduğunda tarama efektini aktif et
             document.getElementById('scannerZone').classList.add('scanning');
             
-            // 1.5 saniye aralıksız basılırsa kilit açılır
-            scanTimer = setTimeout(() => {
+            // 1.5 saniye animasyon oynar, sonra kilit açılır
+            setTimeout(() => {
                 const lock = document.getElementById('lockScreen');
                 lock.style.opacity = '0';
                 lock.style.visibility = 'hidden';
                 document.getElementById('themeToggleBtn').style.display = 'block'; 
                 applyLetterVisibility(); 
             }, 1500);
-        }
-
-        function cancelScan() {
-            if (scanTimer) {
-                clearTimeout(scanTimer);
-                scanTimer = null;
-            }
-            // Elini çektiğinde taramayı ve animasyonları kapat
-            document.getElementById('scannerZone').classList.remove('scanning');
         }
 
         // --- SİYAH / BEYAZ TEMA DEĞİŞTİRME MANTIĞI ---
