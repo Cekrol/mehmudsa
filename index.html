@@ -34,6 +34,32 @@
             z-index: 10;
         }
 
+        /* --- YILDIZ EFEKTLERİ BAŞLANGICI --- */
+        #starContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Pencerenin arkasında kalması için */
+            pointer-events: none; /* Tıklamaları engellememesi için */
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0px #ffffff; }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px #ffffff; }
+            100% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0px #ffffff; }
+        }
+        /* --- YILDIZ EFEKTLERİ BİTİŞİ --- */
+
         .pixel-window {
             background-color: #000000;
             border: 6px double #ffffff;
@@ -41,6 +67,7 @@
             max-width: 90%;
             box-shadow: 12px 12px 0px #1a1a1a;
             transition: all 0.1s ease;
+            z-index: 2; /* Yıldızların önünde dursun */
         }
 
         .window-bar {
@@ -92,7 +119,6 @@
             border: 4px inset #ffffff;
         }
 
-        /* Kaçan No Butonu İçin Stil Ayarı */
         #noBtn {
             position: relative;
             transition: all 0.2s ease;
@@ -180,6 +206,9 @@
 <body>
 
     <div class="wrapper" id="viewInterface">
+        <!-- Yıldızların ekleneceği taşıyıcı -->
+        <div id="starContainer"></div>
+
         <div class="pixel-window" id="popupWindow">
             <div class="window-bar">
                 <span class="window-dot"></span>
@@ -190,7 +219,6 @@
                 <h1 class="title-text">Ne kadar tartışsakda seni seviyorum peki sen?</h1>
                 <div class="btn-container">
                     <button class="pixel-btn" onclick="triggerYes()">Yes</button>
-                    <!-- Hem dokunulduğunda hem de mouse üzerine geldiğinde kaçması için eventler eklendi -->
                     <button class="pixel-btn" id="noBtn" onmouseover="fleeNo()" onclick="fleeNo()" ontouchstart="fleeNo()">No</button>
                 </div>
             </div>
@@ -209,6 +237,37 @@
     <div class="matrix-bg" id="bgContainer"></div>
 
     <script>
+        // Yıldızları oluşturma fonksiyonu
+        function createStars() {
+            const container = document.getElementById('starContainer');
+            const starCount = 100; // Ekranda görünecek yıldız sayısı
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Rastgele konum (Ekranın %0 ile %100'ü arası)
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                
+                // Rastgele boyut (1px ile 3px arası)
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                
+                // Rastgele parlama hızı ve gecikmesi
+                const duration = Math.random() * 3 + 2; // 2sn ile 5sn arası
+                const delay = Math.random() * 5; // 0sn ile 5sn arası
+                star.style.animationDuration = duration + 's';
+                star.style.animationDelay = delay + 's';
+                
+                container.appendChild(star);
+            }
+        }
+
+        // Sayfa yüklendiğinde yıldızları başlat
+        createStars();
+
         const bgContainer = document.getElementById('bgContainer');
 
         function buildMatrixBackground() {
@@ -239,8 +298,8 @@
 
         window.addEventListener('resize', buildMatrixBackground);
 
-        // "Yes" butonuna basınca Matrix arka planı ve Neon Kalp (D🫠) açılacak
         function triggerYes() {
+            // Yıldızların bulunduğu ana ekranı gizle
             document.getElementById('viewInterface').style.display = 'none';
             buildMatrixBackground();
             
@@ -250,19 +309,15 @@
             document.getElementById('neonSet').style.display = 'flex';
         }
 
-        // "No" butonunu ekranda rastgele kaçıran fonksiyon
         function fleeNo() {
             const noBtn = document.getElementById('noBtn');
             
-            // Ekran genişliği ve yüksekliğine göre rastgele sınırlar belirle
             const maxX = window.innerWidth - noBtn.offsetWidth - 40;
             const maxY = window.innerHeight - noBtn.offsetHeight - 40;
             
-            // Rastgele X ve Y koordinatları üret (Ekrandan dışarı taşmaması için)
             const randomX = Math.max(20, Math.floor(Math.random() * maxX));
             const randomY = Math.max(20, Math.floor(Math.random() * maxY));
             
-            // Butonun konumunu absolute yap ve yeni yerine fırlat
             noBtn.style.position = 'fixed';
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
