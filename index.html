@@ -38,7 +38,7 @@
 
         /* --- ÜSTTEKİ TEMA DEĞİŞTİRME BUTONU --- */
         .theme-btn {
-            display: none; /* Kilit açılmadan görünmez */
+            display: none;
             position: fixed;
             top: 20px;
             right: 20px;
@@ -95,9 +95,9 @@
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: none; /* Mobilde basılı tutarken ekranın kaymasını engeller */
         }
 
-        /* Sadece basıldığında dönme efekti başlasın */
         .scanner-container.scanning {
             animation: spinRing 4s linear infinite;
             border-top: 3px solid #ff2d55;
@@ -144,7 +144,6 @@
             filter: drop-shadow(0 0 12px #ff2d55);
         }
 
-        /* Lazer çizgisi varsayılan olarak sabit ve opaktır, basınca hareket eder */
         .laser-line {
             position: absolute;
             left: 0;
@@ -190,7 +189,6 @@
         .star {
             position: absolute;
             background-color: var(--star-color);
-            /* 4 köşeli oval parıltı geometrisi */
             clip-path: polygon(50% 0%, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0% 50%, 37% 37%);
             opacity: 0;
             animation: twinkle linear infinite;
@@ -324,13 +322,13 @@
         }
 
         .char-d {
-            color: #ffffff; /* Sürekli Beyaz */
+            color: #ffffff; 
             text-shadow: 0 0 15px rgba(255,255,255,0.6);
             transition: opacity 0.4s ease;
         }
 
         .char-m {
-            color: #000000; /* Sürekli Siyah */
+            color: #000000; 
             text-shadow: 0 0 15px rgba(255,255,255,0.8);
             transition: opacity 0.4s ease;
         }
@@ -362,8 +360,10 @@
         <div class="lock-title">Para ti, mi amor</div>
         
         <div class="scanner-container" id="scannerZone" 
-             onmousedown="startScan(event)" onmouseup="cancelScan()" onmouseleave="cancelScan()" 
-             ontouchstart="startScan(event)" ontouchend="cancelScan()">
+             onpointerdown="startScan()" 
+             onpointerup="cancelScan()" 
+             onpointerleave="cancelScan()" 
+             onpointercancel="cancelScan()">
             <div class="scanner-inner">
                 <div class="laser-line"></div>
                 <svg class="fingerprint-svg" viewBox="0 0 512 512">
@@ -415,8 +415,7 @@
         // --- PARMAK İZİ GERÇEKÇİ TARAMA SİSTEMİ ---
         let scanTimer = null;
 
-        function startScan(e) {
-            if (e && e.cancelable) e.preventDefault();
+        function startScan() {
             if (scanTimer) return;
 
             // Basıldığında tarama efektini aktif et
@@ -427,8 +426,8 @@
                 const lock = document.getElementById('lockScreen');
                 lock.style.opacity = '0';
                 lock.style.visibility = 'hidden';
-                document.getElementById('themeToggleBtn').style.display = 'block'; // Temayı göster
-                applyLetterVisibility(); // İlk harf durumunu ayarla
+                document.getElementById('themeToggleBtn').style.display = 'block'; 
+                applyLetterVisibility(); 
             }, 1500);
         }
 
@@ -447,18 +446,15 @@
             applyLetterVisibility();
         }
 
-        // Kullanıcının özel kuralı: Siyah temada M, Beyaz temada D gözükür
         function applyLetterVisibility() {
             const isWhiteTheme = document.body.classList.contains('white-theme');
             const mLetter = document.getElementById('letterM');
             const dLetter = document.getElementById('letterD');
             
             if (isWhiteTheme) {
-                // Beyaz olsa onun harfi (D) gözükecek
                 if(dLetter) dLetter.style.opacity = '1';
                 if(mLetter) mLetter.style.opacity = '0';
             } else {
-                // Siyah olsa benim baş harfim (M) gözükecek
                 if(mLetter) mLetter.style.opacity = '1';
                 if(dLetter) dLetter.style.opacity = '0';
             }
@@ -475,7 +471,7 @@
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
                 
-                const size = Math.random() * 5 + 4; // Oval form için ideal boyut
+                const size = Math.random() * 5 + 4; 
                 star.style.width = size + 'px';
                 star.style.height = (size * 1.2) + 'px';
                 
@@ -528,7 +524,6 @@
                     special.style.opacity = '1';
                     startComplexPlexusHeart();
                     
-                    // Harfler ve Söz yavaşça ekrana gelir
                     setTimeout(() => {
                         centerLetters.style.opacity = '1';
                         loveQuote.style.opacity = '1';
@@ -584,4 +579,16 @@
 
                 update(pulseFactor) {
                     const targetX = canvas.width / 2 + this.basePoint.x * pulseFactor;
-                    const targetY = canvas.height / 2 + thi
+                    const targetY = canvas.height / 2 + this.basePoint.y * pulseFactor;
+
+                    this.vibrationSeed += 0.05;
+                    const jitterX = Math.sin(this.vibrationSeed) * 3;
+                    const jitterY = Math.cos(this.vibrationSeed) * 3;
+
+                    let destX = targetX + jitterX;
+                    let destY = targetY + jitterY;
+
+                    if (mouse.x !== null && mouse.y !== null) {
+                        const dx = this.x - mouse.x;
+                        const dy = this.y - mouse.y;
+                        const distance = Math.sqrt(dx * d
