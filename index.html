@@ -45,18 +45,41 @@
             pointer-events: none; /* Tıklamaları engellememesi için */
         }
 
+        /* Ana yıldız taşıyıcısı */
         .star {
             position: absolute;
-            background-color: #ffffff;
-            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             opacity: 0;
             animation: twinkle linear infinite;
         }
 
+        /* 4 köşeli sivri yıldızı oluşturan yatay ve dikey ışık çizgileri */
+        .star::before, .star::after {
+            content: "";
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%; /* Uçların sivri olması için */
+            box-shadow: 0 0 6px #ffffff;
+        }
+
+        /* Dikey ışık çizgisi */
+        .star::before {
+            width: 15%; /* Çizgi kalınlığı */
+            height: 100%; /* Çizgi uzunluğu */
+        }
+
+        /* Yatay ışık çizgisi */
+        .star::after {
+            width: 100%;
+            height: 15%;
+        }
+
         @keyframes twinkle {
-            0% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0px #ffffff; }
-            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px #ffffff; }
-            100% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0px #ffffff; }
+            0% { opacity: 0; transform: scale(0.2); }
+            50% { opacity: 1; transform: scale(1.3); }
+            100% { opacity: 0; transform: scale(0.2); }
         }
         /* --- YILDIZ EFEKTLERİ BİTİŞİ --- */
 
@@ -237,10 +260,10 @@
     <div class="matrix-bg" id="bgContainer"></div>
 
     <script>
-        // Yıldızları oluşturma fonksiyonu
+        // 4 Köşeli Yıldızları oluşturma fonksiyonu
         function createStars() {
             const container = document.getElementById('starContainer');
-            const starCount = 100; // Ekranda görünecek yıldız sayısı
+            const starCount = 80; // Çok kalabalık olmaması için sayıyı hafif düşürdük
 
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
@@ -250,8 +273,8 @@
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
                 
-                // Rastgele boyut (1px ile 3px arası)
-                const size = Math.random() * 2 + 1;
+                // Yıldızın toplam kaplayacağı alan (Daha net görünmesi için 8px ile 20px arası)
+                const size = Math.random() * 12 + 8;
                 star.style.width = size + 'px';
                 star.style.height = size + 'px';
                 
